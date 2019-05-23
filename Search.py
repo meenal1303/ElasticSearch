@@ -10,11 +10,15 @@ def main():
     i = 1
     for index,row in df.iterrows():
         # print(row['User Id'])
-        es.index(index='my-index', doc_type='twitter', id=i, body={row['User Id']: row['Tweet URL']})
+        es.index(index='my-index', doc_type='twitter', id=i, body={
+            "user_id": row['User Id'],
+            "Tweet URL": row['Tweet URL'],
+            "user_name": row['Username'],
+            "Tweet_content": row['Tweet Content']
+        })
         i = i+1
 
     res = es.get(index='my-index', doc_type='twitter', id=15)
-    print(res)
     print(res['_source'])
 
 
