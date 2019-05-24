@@ -1,0 +1,32 @@
+import csv
+from elasticsearch import Elasticsearch
+import pandas as pd
+import json
+
+
+def create_index():
+    filename = "/home/ubuntu/Downloads/sample.csv"
+    df = pd.read_csv(filename, sep=",")
+    i = 1
+    for index, row in df.iterrows():
+        # print(row['User Id'])
+        es.index(index='my-index', doc_type='twitter', id=i, body={
+            "Tweet_content": row['Tweet Content'],
+            "user_id": row['User Id'],
+            "Tweet URL": row['Tweet URL'],
+            "user_name": row['Username']
+        })
+        i = i + 1
+
+
+def search(index_name, query_name):
+    res = es.search(index=index_name, body={"query": {"match": {"Tweet_content": query_name}}})
+    # print(json.dumps(res))
+    for ele in res["hits"]["hits"]:
+        print(ele.get("_source", None).get("Tweet_content", None))
+
+
+if __name__ == '__main__':
+    es = Elasticsearch()
+    create_index()
+    search('my-index', "weekend")
